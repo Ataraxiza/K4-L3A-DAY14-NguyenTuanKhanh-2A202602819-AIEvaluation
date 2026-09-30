@@ -46,15 +46,19 @@ Ba bias thường gặp:
 
 **Câu 1: Thiết kế experiment phát hiện position bias với ít nhất hai conditions.**
 
-> *Câu trả lời:*
+> Chuẩn bị một tập câu hỏi và các cặp answer A/B đã được tạo hoặc đánh giá trước.
+- **Condition 1:** A xuất hiện trước B → Judge chọn A hoặc B.
+- **Condition 2:** B xuất hiện trước A → Giữ nguyên nội dung, chỉ đảo thứ tự.
+So sánh kết quả của hai conditions. Nếu judge thường chọn answer đứng trước và kết quả thay đổi đáng kể sau khi đảo vị trí, đó là dấu hiệu của **position bias**.
+
 
 **Câu 2: Làm thế nào giảm verbosity bias bằng rubric design?**
 
-> *Câu trả lời:*
+> Rubric nên đánh giá chất lượng và mức độ đáp ứng yêu cầu, thay vì độ dài. Quy định rõ rằng answer dài hơn không mặc nhiên tốt hơn và chỉ được tính điểm cho thông tin liên quan, chính xác và cần thiết. Có thể thêm tiêu chí như “concise and relevant” và phạt việc lặp lại hoặc đưa thông tin không cần thiết.
 
 **Câu 3: Tại sao cần calibrate LLM judge với human labels?**
 
-> *Câu trả lời:*
+> Human labels cung cấp ground truth tham chiếu để kiểm tra judge có đánh giá phù hợp với tiêu chuẩn của con người hay không. Calibration giúp phát hiện các bias như position, verbosity hoặc self-preference, đồng thời giúp điều chỉnh rubric, prompt và scoring criteria. Sau calibration, có thể đo mức độ agreement giữa LLM judge và human labels để đánh giá độ tin cậy của judge.
 
 ### Exercise 1.3 — Evaluation trong CI/CD
 
@@ -62,13 +66,17 @@ Ba bias thường gặp:
 
 | Metric | Threshold | Lý do |
 |---|---:|---|
-| Faithfulness | | |
-| Answer Relevance | | |
-| Completeness | | |
+| Faithfulness | < 0.7 | Chọn cao hơn mức Significant issues một chút do faithfulness thấp nghĩa là AI hay hallucination, có thể bịa thông tin sai lệch dẫn đến hậu quả nghiêm trọng. |
+| Answer Relevance | < 0.6 | Chọn khớp với mức báo động Significant issues do thông tin AI đưa ra khi relevance thấp có thể được phát hiện rất nhanh chóng bởi người dùng, nhìn chung không để lại hậu quả đáng kể. |
+| Completeness | < 0.7 | Chọn cao hơn mức Significant issues một chút do câu trả lời đưa ra khi thiếu completeness có khả năng dẫn đến kết luận sai hoặc thực hiện hành vi thiếu cân nhắc đến constraint, cả hai đều gây ra hậu quả nghiêm trọng. |
 
 **Câu 2: Khi nào dùng offline evaluation, online evaluation và human review?**
 
-> *Câu trả lời:*
+> **Offline evaluation**: Dùng trước khi deployment hoặc khi thay đổi model, prompt, retriever. Đánh giá trên một dataset cố định để so sánh các phiên bản một cách nhất quán.
+
+**Online evaluation**: Dùng sau khi deployment để theo dõi performance trên traffic thực tế, phát hiện các vấn đề mà offline dataset không phản ánh được.
+
+**Human review**: Dùng khi cần đánh giá những trường hợp phức tạp, subjective hoặc có rủi ro cao, đồng thời dùng human labels để kiểm tra và calibrate LLM-as-a-Judge.
 
 ---
 
