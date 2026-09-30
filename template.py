@@ -2,7 +2,7 @@
 Day 14 — AI Evaluation & Benchmarking Pipeline
 AICB-P1: AI Practical Competency Program, Phase 1
 
-Key concepts from lecture:
+ concepts from lecture:
     - Evaluation = Scientific Method for AI (Hypothesis → Experiment → Measure → Conclude → Iterate)
     - 4 nhóm metrics: Task Completion, Answer Quality, RAG-Specific, Business
     - RAG pipeline metrics: Context Recall → Context Precision → Faithfulness → Answer Relevancy
@@ -487,7 +487,7 @@ class LLMJudge:
                 "reasoning": str(reasoning),
             }
 
-        except (ValueError, TypeError, KeyError, AttributeError):
+        except (ValueError, TypeError, Error, AttributeError):
             return {
                 "scores": default_scores,
                 "reasoning": raw_response,
@@ -814,7 +814,7 @@ class FailureAnalyzer:
 
         if lowest_metric == "completeness" and lowest_score < 0.5:
             return (
-                "Answer is missing key information — increase context window "
+                "Answer is missing  information — increase context window "
                 "or improve generation"
             )
 
@@ -972,7 +972,7 @@ if __name__ == "__main__":
 
     def mock_agent(question: str) -> str:
         """Simple mock agent for testing. Replace with your actual agent."""
-        return f"Based on my knowledge: {question[:30]}... The answer involves key concepts."
+        return f"Based on my knowledge: {question[:30]}... The answer involves  concepts."
 
     # Run benchmark
     results = runner.run(qa_pairs, mock_agent, evaluator)

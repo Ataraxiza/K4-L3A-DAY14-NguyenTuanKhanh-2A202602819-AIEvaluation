@@ -362,7 +362,7 @@ def rerank_by_overlap(contexts: list[str], query: str) -> list[str]:
 
     return sorted(
         contexts,
-        =lambda c: len(_tokenize(c) & query_tokens),
+        key=lambda c: len(_tokenize(c) & query_tokens),
         reverse=True,
     )
 
@@ -786,7 +786,7 @@ class FailureAnalyzer:
             "completeness": failure.completeness,
         }
 
-        lowest_metric = min(scores, =scores.get)
+        lowest_metric = min(scores, key=scores.get)
         lowest_score = scores[lowest_metric]
 
         # Only treat a metric as the root cause when it is actually
