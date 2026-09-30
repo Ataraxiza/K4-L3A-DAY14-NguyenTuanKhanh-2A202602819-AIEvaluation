@@ -241,30 +241,43 @@ class BM25Retriever:
 class TextGenerator(Protocol):
     def generate(self, prompt: str) -> str: ...
 
-
 class OpenAIGenerator:
+    """Gemini generator through Google's OpenAI-compatible API."""
+
     def __init__(self, max_output_tokens: int = 300) -> None:
-        api_key = os.getenv("OPENAI_API_KEY", "").strip()
-        self.model = os.getenv("OPENAI_MODEL", "").strip()
+        api_key = os.getenv("GEMINI_API_KEY", "").strip()
+        self.model = os.getenv("GEMINI_MODEL", "").strip()
+
         if not api_key:
-            raise RuntimeError("OPENAI_API_KEY is missing from .env")
+            raise RuntimeError("GEMINI_API_KEY is missing from .env")
         if not self.model:
-            raise RuntimeError("OPENAI_MODEL is missing from .env")
-        self.client = OpenAI(api_key=api_key)
+            raise RuntimeError("GEMINI_MODEL is missing from .env")
+
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        )
         self.max_output_tokens = max_output_tokens
 
     def generate(self, prompt: str) -> str:
-        response = self.client.responses.create(
+        response = self.client.chat.completions.create(
             model=self.model,
-            input=prompt,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
             temperature=0,
-            max_output_tokens=self.max_output_tokens,
+            max_tokens=self.max_output_tokens,
         )
-        answer = response.output_text.strip()
-        if not answer:
-            raise RuntimeError("OpenAI returned an empty answer")
-        return answer
 
+        answer = response.choices[0].message.content
+
+        if not answer or not answer.strip():
+            raise RuntimeError("Gemini returned an empty answer")
+
+        return answer.strip()
 
 @dataclass(frozen=True)
 class DomainResponse:
